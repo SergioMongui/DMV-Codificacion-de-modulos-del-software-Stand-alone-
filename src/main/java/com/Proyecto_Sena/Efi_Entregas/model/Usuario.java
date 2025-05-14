@@ -2,6 +2,7 @@ package com.Proyecto_Sena.Efi_Entregas.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.util.List;
 
 //--Creacion de la clase usuario--//
 
@@ -39,5 +40,7 @@ public class Usuario {
     @Column(nullable = false)
     private String rol;
 
+    @OneToMany(mappedBy = "usuario")
+    private List<ConexAsignacion> asignaciones; 
 
 }

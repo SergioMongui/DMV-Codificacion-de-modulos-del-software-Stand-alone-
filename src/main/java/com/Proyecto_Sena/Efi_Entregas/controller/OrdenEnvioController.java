@@ -1,43 +1,28 @@
 package com.Proyecto_Sena.Efi_Entregas.controller;
 
 import com.Proyecto_Sena.Efi_Entregas.model.OrdenEnvio;
-import com.Proyecto_Sena.Efi_Entregas.repository.OrdenEnvioRepository;
+import com.Proyecto_Sena.Efi_Entregas.service.OrdenEnvioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/api/ordenenvio")
+@RequestMapping("/ordenes")
 public class OrdenEnvioController {
 
     @Autowired
-    private OrdenEnvioRepository ordenEnvioRepository;
+    private OrdenEnvioService ordenEnvioService;
 
     @PostMapping
-    public OrdenEnvio create(@RequestBody OrdenEnvio ordenEnvio) {
-        return ordenEnvioRepository.save(ordenEnvio);
+    public ResponseEntity<OrdenEnvio> crearOrden(@RequestBody OrdenEnvio orden) {
+        return ResponseEntity.ok(ordenEnvioService.save(orden));
     }
 
     @GetMapping
-    public List<OrdenEnvio> getAll() {
-        return ordenEnvioRepository.findAll();
+    public List<OrdenEnvio> obtenerTodas() {
+        return ordenEnvioService.getAll();
     }
-
-    @GetMapping("/{id}")
-    public OrdenEnvio getById(@PathVariable Long id) {
-        return ordenEnvioRepository.findById(id).orElse(null);
-    }
-
-    @PutMapping("/{id}")
-    public OrdenEnvio update(@PathVariable Long id, @RequestBody OrdenEnvio ordenEnvio) {
-        ordenEnvio.setIdOrden(id);
-        return ordenEnvioRepository.save(ordenEnvio);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        ordenEnvioRepository.deleteById(id);
-    }
-
 }

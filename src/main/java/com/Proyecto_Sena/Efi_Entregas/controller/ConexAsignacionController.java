@@ -1,41 +1,56 @@
 package com.Proyecto_Sena.Efi_Entregas.controller;
 
 import com.Proyecto_Sena.Efi_Entregas.model.ConexAsignacion;
-import com.Proyecto_Sena.Efi_Entregas.repository.ConexAsignacionRepository;
+import com.Proyecto_Sena.Efi_Entregas.service.ConexAsignacionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/conexasignaciones")
+@RequestMapping("/asignaciones")
 public class ConexAsignacionController {
-    @Autowired
-    private ConexAsignacionRepository conexAsignacionRepository;
 
-    @PostMapping
-    public ConexAsignacion create(@RequestBody ConexAsignacion conexAsignacion) {
-        return conexAsignacionRepository.save(conexAsignacion);
-    }
+    @Autowired
+    private ConexAsignacionService conexAsignacionService;
 
     @GetMapping
     public List<ConexAsignacion> getAll() {
-        return conexAsignacionRepository.findAll();
+        return conexAsignacionService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ConexAsignacion getById(@PathVariable Long id) {
-        return conexAsignacionRepository.findById(id).orElse(null);
+    public ResponseEntity<ConexAsignacion> getById(@PathVariable Long id) {
+        return conexAsignacionService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ConexAsignacion create(@RequestBody ConexAsignacion conexAsignacion) {
+        return conexAsignacionService.save(conexAsignacion);
     }
 
     @PutMapping("/{id}")
-    public ConexAsignacion update(@PathVariable Long id, @RequestBody ConexAsignacion conexAsignacion) {
-        conexAsignacion.setIdConexAsignacion(id);
-        return conexAsignacionRepository.save(conexAsignacion);
+    public ResponseEntity<ConexAsignacion> update(@PathVariable Long id, @RequestBody ConexAsignacion conexAsignacion) {
+        return conexAsignacionService.getById(id)
+                .map(existing -> {
+                    conexAsignacion.setIdConexAsignacion(id);
+                    return ResponseEntity.ok(conexAsignacionService.save(conexAsignacion));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        conexAsignacionRepository.deleteById(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        Optional<ConexAsignacion> asignacion = conexAsignacionService.getById(id);
+        if (asignacion.isPresent()) {
+            conexAsignacionService.delete(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

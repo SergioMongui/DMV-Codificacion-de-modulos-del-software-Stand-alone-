@@ -5,23 +5,20 @@ import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "orden_envio")
 public class OrdenEnvio {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idOrden;
 
-    @Column(nullable = false)
     private String nombreCliente;
-
-    @Column(nullable = false)
     private String direccion;
-
-    @Column(nullable = false)
     private String telefono;
-
-    @Column(nullable = false)
     private String listaProductos;
-
-    @Column(nullable = false)
     private Double valor;
+
+    public void setIdOrden(Long idOrden) {
+        this.idOrden = idOrden;
+    }
 }

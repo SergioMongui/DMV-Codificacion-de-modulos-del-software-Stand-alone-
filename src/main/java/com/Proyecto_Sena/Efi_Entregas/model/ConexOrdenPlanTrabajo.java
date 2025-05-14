@@ -19,6 +19,12 @@ public class ConexOrdenPlanTrabajo {
     @JoinColumn(name = "idOrden", nullable = false)
     private OrdenEnvio ordenEnvio;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;
+
+    @PrePersist
+    protected void onCreate() {
+        this.fechaCreacion = LocalDateTime.now();
+    }
+
 }
